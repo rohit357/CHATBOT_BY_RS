@@ -11,8 +11,38 @@ def speak(text):
     engine.say(text)
     engine.runAndWait()
 
+def wishme():
+    hour = int(datetime.datetime.now().hour)
+
+    if hour >= 0 and hour < 12:
+        speak("Good Morning")
+        print("Good Morning!")
     
-def tell_time():
+    elif hour >= 12 and hour < 18:
+        speak("Good Afternoon")
+        print("Good Afternoon!")
+
+    else:
+        speak("Good Evening")
+        print("Good Evening!")
+def usr_data_mngr():
+    try:
+        crt_fle = open("usr_data.txt", "x")  
+        speak("Sign in or login as user")
+    except FileExistsError: 
+        speak("Sign in or login as user")
+        usr_input = input("UserName : ")
+        with open("usr_data.txt", "r+") as crt_fle:  
+            file_content = crt_fle.read()  
+            if usr_input not in file_content: 
+                crt_fle.write(f"\n{usr_input}")  
+                speak(f"Hello {usr_input}, welcome!")
+            else:
+                speak(f"Hey welcome back {usr_input}, nice to see you!")
+
+
+
+def tell_time():                                                                                 
     current_time = datetime.datetime.now().strftime("%I:%M %p")
     speak(f"The current time is {current_time}")
 
@@ -21,9 +51,44 @@ def open_application(app_name):
     if "notepad" in app_name.lower():
         os.system("notepad")
         speak("Opening Notepad")
+
     elif "calculator" in app_name.lower():
         os.system("calc")
         speak("Opening Calculator")
+    
+    elif "paint" in app_name:
+        os.system("mspaint")
+        speak("Opening Paint")
+
+    elif "word" in app_name:
+        os.system("start winword")
+        speak("Opening Microsoft Word")
+
+    elif "excel" in app_name:
+        os.system("start excel")
+        speak("Opening Microsoft Excel")
+        
+    elif "powerpoint" in app_name:
+        os.system("start powerpnt")
+        speak("Opening Microsoft PowerPoint")
+
+    elif "task manager" in app_name:
+        os.system("taskmgr")
+        speak("Opening Task Manager")
+
+    elif "command prompt" in app_name:
+        os.system("cmd")
+        speak("Opening Command Prompt")
+
+    elif "file explorer" in app_name:
+        os.system("explorer")
+        speak("Opening File Explorer")
+
+    elif "chrome" in app_name:
+        os.system("start chrome")
+        speak("Opening Google Chrome")
+
+    
     else:
         speak("Sorry, I can't open that application.")
 
@@ -57,7 +122,12 @@ def search_wikipedia(query):
 
 # Main chatbot function
 def chatbot():
-    speak("Hello! How can I assist you today?")
+    
+    wishme()
+
+    usr_data_mngr()
+
+    speak("How can I assist you today?")
     
     while True:
         user_input = input("Type here: ").lower()
@@ -80,7 +150,7 @@ def chatbot():
                 website_name = user_input.replace("open website", "").replace("open", "").strip()
                 open_website(website_name)
             else:
-                app_name = user_input.replace("open", "").strip()  # Extract the app name
+                app_name = user_input.replace("open", "").strip() 
                 open_application(app_name)
 
         elif "search wikipedia" in user_input:
