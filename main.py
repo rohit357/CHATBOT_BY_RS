@@ -3,7 +3,10 @@ import datetime
 import os
 import webbrowser
 import wikipedia
-
+import requests
+from googletrans import Translator
+import pyautogui
+import time
 
 engine = pyttsx3.init()
 
@@ -41,6 +44,33 @@ def usr_data_mngr():
                 speak(f"Hey welcome back {usr_input}, nice to see you!")
 
 
+def get_daily_quote():
+    try:
+        response = requests.get("https://zenquotes.io/api/random")
+        quote_data = response.json()
+        quote = quote_data[0]['q'] 
+        author = quote_data[0]['a'] 
+        speak(f"Here is your daily quote: {quote} by {author}")
+        print(f"{quote} - {author}")
+    except Exception as e:
+        speak("Sorry, I couldn't retrieve a quote at the moment.")
+
+def translate_text(text, target_language):
+    translator = Translator()
+    try:
+        translation = translator.translate(text, dest=target_language)
+        translated_text = translation.text
+        speak(f"The translation in {target_language} is: {translated_text}")
+        print(f"{text} -> {translated_text}")
+    except Exception as e:
+        speak("Sorry, I couldn't translate that at the moment.")
+        print(f"Error: {e}")
+
+def close_app_with_mouse():
+    speak("Moving the mouse to close the application.")
+    pyautogui.moveTo(1880, 10)
+    time.sleep(1)
+    pyautogui.click()
 
 def tell_time():                                                                                 
     current_time = datetime.datetime.now().strftime("%I:%M %p")
@@ -135,15 +165,41 @@ def chatbot():
         if "time" in user_input:
             tell_time()
 
-        elif "what is your name" in user_input:
+        elif "your name" in user_input:
             speak("my name is ultron")
 
-        elif "tell me something about yourself" in user_input:
-            speak("I am ultron an advanced chatbot developed by Rohit Sharma, a class eleventh computer science student. I am programmed in python language. I have been developed as an project for SLC. There are various tasks that i can perform. Be free to use me")
-            print("I am ultron an advanced chatbot developed by Rohit Sharma, a class eleventh computer science student. I am programmed in python language. I have been developed as an project for SLC. There are various tasks that i can perform. Be free to use me")
+        elif "yourself" in user_input:
+            speak("I am ultron an advanced chatbot developed by Rohit Sharma and Team, they are class eleventh computer science students. I am programmed in python language. I have been developed as an project for SLC. There are various tasks that i can perform. Be free to use me")
+            print("I am ultron an advanced chatbot developed by Rohit Sharma and Team, they are class eleventh computer science students. I am programmed in python language. I have been developed as an project for SLC. There are various tasks that i can perform. Be free to use me")
 
-        elif "happy model school principal name" in user_input:
+        elif "mineesh sir" in user_input:
+            speak("mineesh sir teaches physics")
+
+        elif "school" in user_input or "school's" in user_input:
+            speak("Happy Model Higher Secondary School")
+            print("Happy Model Higher Secondary School")
+
+        
+        elif "principal" in user_input:
             speak("mineesh sir")
+
+        elif "quote" in user_input:
+            get_daily_quote()
+
+        elif "translate" in user_input:
+            speak("What would you like to translate?")
+            text_to_translate = input("Enter the text: ").strip()
+            speak("Which language would you like to translate to?")
+            target_language = input("Enter the language code (e.g., 'es' for Spanish, 'fr' for French): ").lower()
+            translate_text(text_to_translate, target_language)
+           
+            # 'en': English
+            # 'es': Spanish
+            # 'fr': French
+            # 'de': German
+            # 'hi': Hindi
+            # 'zh-cn': Chinese 
+
         
         elif "open" in user_input:
             if "website" in user_input:
@@ -153,9 +209,12 @@ def chatbot():
                 app_name = user_input.replace("open", "").strip() 
                 open_application(app_name)
 
-        elif "search wikipedia" in user_input:
+        elif "search" in user_input:
             query = user_input.replace("search wikipedia", "").strip()
             search_wikipedia(query)
+
+        elif "exit app" in user_input or "close app" in user_input:
+            close_app_with_mouse()
 
         elif "exit" in user_input or "quit" in user_input:
             speak("Goodbye!")
@@ -168,4 +227,4 @@ def chatbot():
 if __name__ == "__main__":
     chatbot()
 
-# DEVELOPED BY ROHIT SHARMA
+# DEVELOPED BY ROHIT SHARMA AND TEAM
